@@ -2,6 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
 
+import markdown
+from django.utils.html import mark_safe
+
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -33,6 +36,7 @@ class Tag(models.Model):
 class Post(models.Model):
     class Meta:
         ordering = ["-publish_date"]
+        verbose_name_plural = "Posts"
 
     title = models.CharField(max_length=255, unique=True)
     subtitle = models.CharField(max_length=255, blank=True)
@@ -46,3 +50,7 @@ class Post(models.Model):
 
     author = models.ForeignKey(Profile, on_delete=models.PROTECT)
     tags = models.ManyToManyField(Tag, blank=True)
+
+    @property
+    def body_rendered(self):
+        return mark_safe(markdown.markdown(self.body, output_format="html5"))
