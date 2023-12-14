@@ -1,26 +1,17 @@
 import "./App.css";
 
-import React from "react";
-import { useQuery, gql } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
 
-const ALL_POSTS = gql`
-  {
-    allPosts {
-      author {
-        user {
-          username
-        }
-      }
-      body
-      id
-      title
-      subtitle
-    }
-  }
-`;
+import ALL_POSTS from "./querys/index";
 
 function App() {
   const { data, loading, error } = useQuery(ALL_POSTS);
+  const [posts, setPosts] = useState(null);
+
+  useEffect(() => {
+    if (data) setPosts(data.allPosts);
+  }, [data]);
 
   if (loading) return "Loading...";
   if (error) return <pre>{error.message}</pre>;
@@ -29,14 +20,15 @@ function App() {
     <div>
       <h1>Postagens</h1>
       <ul>
-        {data.allPosts.map((post) => (
-          <li key={post.id}>
-            <h2>{post.title}</h2>
-            <h3>{post.subtitle}</h3>
-            <p>{post.body}</p>
-            {post.author.user.username}
-          </li>
-        ))}
+        {posts &&
+          posts.map((post) => (
+            <li key={post.id}>
+              <h2>{post.title}</h2>
+              <h3>{post.subtitle}</h3>
+              <p>{post.body}</p>
+              {post.author.user.username}
+            </li>
+          ))}
       </ul>
     </div>
   );
