@@ -1,0 +1,6 @@
+.logo {
+    transition: transform 1.0s ease; /* Add smooth transition */
+  }
+.logo:hover {
+    transform: rotate(360deg); /* Rotate the logo on hover */
+  }
